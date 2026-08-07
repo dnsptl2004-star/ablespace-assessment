@@ -13,6 +13,7 @@ import {
   Sun,
   Moon,
   ShieldCheck,
+  Users,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -24,6 +25,7 @@ export const Sidebar: React.FC = () => {
 
   const navItems = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { label: 'Caseload', href: '/caseload', icon: Users },
     { label: 'Tasks', href: '/tasks', icon: CheckSquare },
     { label: 'Profile', href: '/profile', icon: User },
     { label: 'Settings', href: '/settings', icon: Settings },
