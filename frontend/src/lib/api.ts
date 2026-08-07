@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://taskmaster-backend-19k7.onrender.com';
+const API_BASE_URL = rawApiUrl.replace(/\/+$/, '');
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

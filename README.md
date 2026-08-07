@@ -119,7 +119,7 @@ Visit `http://localhost:3000` in your browser. Click **"Instant 1-Click Guest De
 2. Go to [Vercel Dashboard](https://vercel.com) → **Add New Project**.
 3. Select the repository and set **Root Directory** to `frontend`.
 4. Add Environment Variable:
-   - `NEXT_PUBLIC_API_URL`: `https://your-backend-service.onrender.com`
+   - `NEXT_PUBLIC_API_URL`: `https://taskmaster-backend-19k7.onrender.com`
 5. Click **Deploy**.
 
 ### Deploying Backend to Render
