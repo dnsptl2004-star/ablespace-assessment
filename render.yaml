@@ -3,10 +3,11 @@ services:
     name: taskmaster-backend
     runtime: node
     rootDir: backend
-    buildCommand: npm install --include=dev && npx prisma generate && npx nest build
+    buildCommand: chmod +x build.sh && bash build.sh
     startCommand: node dist/main
     plan: free
     region: oregon
+    healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
         value: mongodb+srv://dnsptl2004:MyStrong%40123@cluster0.bdfkbv9.mongodb.net/mydb
