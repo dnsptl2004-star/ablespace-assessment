@@ -1,0 +1,47 @@
+// Prisma schema for Task Management System using MongoDB
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  email        String        @unique
+  name         String
+  passwordHash String
+  avatarUrl    String?
+  role         String        @default("USER")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  tasks        Task[]
+  settings     UserSettings?
+}
+
+model UserSettings {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @unique @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  themeMode   String   @default("system") // "light", "dark", "system"
+  accentColor String   @default("indigo") // "indigo", "emerald", "violet", "amber", "cyan"
+  compactMode Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+}
+
+model Task {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  status      String    @default("TODO") // "TODO", "IN_PROGRESS", "COMPLETED"
+  priority    String    @default("MEDIUM") // "LOW", "MEDIUM", "HIGH", "URGENT"
+  category    String    @default("Work") // "Work", "Personal", "Study", "Finance", "Health"
+  dueDate     DateTime?
+  userId      String    @db.ObjectId
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
