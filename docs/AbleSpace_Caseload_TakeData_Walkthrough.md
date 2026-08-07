@@ -39,14 +39,45 @@ graph TD
 
 ## 3. Detailed Interface Evaluation & Screenshots / Mockups
 
-### Screen 1: Caseload Overview Matrix
+## 3. Caseload Management
 
-> [!NOTE]
-> **Key Improvement**: Modernized table card layout with glassmorphic cards, clear IEP compliance status, and one-click session triggers.
+![AbleSpace Caseload Management Interface](file:///C:/Users/dnspt/.gemini/antigravity/brain/966b4834-dece-422d-b5b2-283387f064f1/caseload_management_screen_1786114284783.png)
+
+### Feature Breakdown & Interface Description
+
+The **Caseload Management** dashboard serves as the central command hub for Special Education (SPED) providers, Speech-Language Pathologists (SLPs), and Occupational Therapists (OTs). It provides immediate access to active student profiles, IEP compliance indicators, and direct pathways to log daily trial data.
+
+#### 1. Student List & Profile Cards
+- **Visual Student Cards**: Each student is presented as an interactive profile card displaying their avatar/photo, name, grade level, and primary discipline tag (e.g., *Grade 4 • SPED*, *Grade 2 • Speech*).
+- **IEP Goal Metrics**: Displays active IEP goal counts (e.g., `🎯 3 Active Goals`) alongside real-time status badges indicating pending trials for the current day (`⏱️ Due Today: 2` vs. `✅ Completed Today`).
+- **Quick Status Indicators**: Color-coded progress chips highlight student attendance, upcoming annual IEP reviews, and triennial evaluation deadlines.
+
+#### 2. Real-Time Search Bar
+- **Instant Keyword Filtering**: Placed prominently at the top of the screen (`Search student name or goal...`), allowing providers to instantly filter their caseload as they type.
+- **Multi-Field Matching**: Searches across student first/last names, student ID numbers, primary diagnoses, or specific IEP goal domain keywords (e.g., *"expressive vocabulary"*, *"fine motor"*, *"behavioral transition"*).
+
+#### 3. Category & Discipline Filter System
+- **Discipline Pills**: Allows providers managing multi-disciplinary caseloads to filter students by service type:
+  - **All Students**: View complete assigned caseload.
+  - **SPED**: Filter for Special Education classroom students.
+  - **Speech**: View Speech-Language Therapy caseload.
+  - **OT / PT**: Occupational & Physical Therapy student lists.
+- **Status & Grade Level Filters**: Quick toggles for *Due Today*, *Incomplete Data*, *Grade Level (K-12)*, and *Upcoming IEP Review*.
+
+#### 4. "Take Data" Primary Action Button
+- **Instant Session Trigger**: Prominently featured on each student card as a vibrant high-contrast button labeled **`⚡ Take Data`**.
+- **One-Click Workflow**: Clicking **Take Data** bypasses nested administrative menus and immediately launches the **Goal Selection & Trial Data Collection Interface** (Screen 2) pre-loaded with the student's active IEP targets.
+- **Mobile Touch Optimized**: Designed with a minimum **48px x 48px** touch target area to ensure fast, hassle-free taps on mobile tablets and smartphones during active classroom instruction.
+
+---
+
+### Screen Matrix Overview
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │  💼 Caseload Management (14 Active Students)               [ + Add Student ] [ Filter ]│
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ 🔍 [ Search student name or goal...                ]  [ All ] [ Speech ] [ OT ] [ SPED ]│
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ ┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐         │
 │ │ 👤 Marcus Vance      │  │ 👤 Sophia Reynolds   │  │ 👤 Ethan Miller      │         │
