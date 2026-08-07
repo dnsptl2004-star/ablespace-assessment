@@ -140,9 +140,20 @@ export default function CaseloadPage() {
   const [selectedGoal, setSelectedGoal] = useState<string>('');
   const [promptLevel, setPromptLevel] = useState<PromptLevel>('Independent');
   const [trials, setTrials] = useState<Trial[]>([]);
-  const [sessionTimer, setSessionTimer] = useState<number>(145); // 02:25
+  const [sessionTimer, setSessionTimer] = useState<number>(0);
   const [note, setNote] = useState<string>('');
   const [sessionSaved, setSessionSaved] = useState(false);
+
+  // Active Timer interval tick while Take Data modal is active
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activeModalStudent) {
+      interval = setInterval(() => {
+        setSessionTimer((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [activeModalStudent]);
 
   // Filter students based on search and discipline
   const filteredStudents = SAMPLE_STUDENTS.filter((student) => {
@@ -161,6 +172,7 @@ export default function CaseloadPage() {
     setActiveModalStudent(student);
     setSelectedGoal(student.goals[0] || 'General IEP Target');
     setPromptLevel('Independent');
+    setSessionTimer(0);
     setTrials([
       { type: 'correct', prompt: 'Independent' },
       { type: 'correct', prompt: 'Independent' },
