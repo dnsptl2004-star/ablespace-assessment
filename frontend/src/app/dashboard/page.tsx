@@ -14,7 +14,6 @@ import {
   AlertTriangle,
   ListTodo,
   TrendingUp,
-  Plus,
   ArrowRight,
   Flame,
 } from 'lucide-react';
@@ -22,6 +21,7 @@ import Link from 'next/link';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState<TaskStats | null>(null);
   const [recentTasks, setRecentTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,21 +72,22 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex">
-      <Sidebar />
+      <Sidebar mobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} />
 
-      <div className="flex-1 ml-64 min-w-0">
+      <div className="flex-1 lg:ml-64 min-w-0">
         <Navbar
           title={`Welcome back, ${user?.name || 'User'} 👋`}
           description="Here is your team's real-time task productivity overview."
           onOpenCreateModal={() => setIsModalOpen(true)}
+          onOpenMobileMenu={() => setMobileMenuOpen(true)}
         />
 
-        <main className="p-8 space-y-8 max-w-7xl mx-auto">
+        <main className="p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8 max-w-7xl mx-auto w-full">
           {/* Stats Cards Row */}
           {isLoading || !stats ? (
             <DashboardStatsSkeleton />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
               {/* Total Tasks */}
               <div className="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 hover:shadow-xl transition-all">
                 <div className="flex items-center justify-between mb-3">
@@ -164,8 +165,8 @@ export default function DashboardPage() {
           {/* Productivity & Priority Visual Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Completion Rate Card */}
-            <div className="glass-card p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 lg:col-span-2">
-              <div className="flex items-center justify-between mb-6">
+            <div className="glass-card p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 lg:col-span-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
                 <div>
                   <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-indigo-500" />
@@ -196,24 +197,24 @@ export default function DashboardPage() {
             </div>
 
             {/* Priority Distribution */}
-            <div className="glass-card p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80">
+            <div className="glass-card p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
                 <Flame className="w-5 h-5 text-red-500" /> Priority Mix
               </h3>
               <div className="space-y-3">
-                <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 font-semibold">
+                <div className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 font-semibold">
                   <span>Urgent Tasks</span>
                   <span>{stats?.priorityCounts?.URGENT || 0}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold">
+                <div className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold">
                   <span>High Priority</span>
                   <span>{stats?.priorityCounts?.HIGH || 0}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold">
+                <div className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold">
                   <span>Medium Priority</span>
                   <span>{stats?.priorityCounts?.MEDIUM || 0}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-slate-500/10 text-slate-600 dark:text-slate-400 font-semibold">
+                <div className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-slate-500/10 text-slate-600 dark:text-slate-400 font-semibold">
                   <span>Low Priority</span>
                   <span>{stats?.priorityCounts?.LOW || 0}</span>
                 </div>
@@ -222,7 +223,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Recent Task Activity Section */}
-          <div className="glass-card p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80">
+          <div className="glass-card p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
@@ -249,9 +250,9 @@ export default function DashboardPage() {
                 {recentTasks.map((t) => (
                   <div
                     key={t.id}
-                    className="flex items-center justify-between p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors"
+                    className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/40 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors gap-3"
                   >
-                    <div className="min-w-0 pr-4">
+                    <div className="min-w-0 flex-1">
                       <h4 className="font-semibold text-xs text-slate-900 dark:text-white truncate">
                         {t.title}
                       </h4>

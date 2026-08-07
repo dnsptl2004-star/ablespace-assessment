@@ -131,6 +131,7 @@ interface Trial {
 }
 
 export default function CaseloadPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDiscipline, setSelectedDiscipline] = useState<string>('All');
   const [activeModalStudent, setActiveModalStudent] = useState<Student | null>(null);
@@ -186,23 +187,26 @@ export default function CaseloadPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex">
-      <Sidebar />
+      <Sidebar mobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} />
 
-      <div className="pl-64 flex-1 flex flex-col min-w-0">
-        <Navbar title="AbleSpace Caseload & Take Data" />
+      <div className="lg:pl-64 flex-1 flex flex-col min-w-0">
+        <Navbar
+          title="AbleSpace Caseload & Take Data"
+          onOpenMobileMenu={() => setMobileMenuOpen(true)}
+        />
 
-        <main className="p-6 max-w-7xl w-full mx-auto space-y-6">
+        <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
           {/* Header Banner */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 text-white p-6 sm:p-8 shadow-xl shadow-indigo-600/15">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 text-white p-5 sm:p-8 shadow-xl shadow-indigo-600/15">
             <div className="relative z-10 space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wide">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 <span>AbleSpace SPED Workflow System</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight">
                 Caseload Management & Take Data
               </h1>
-              <p className="text-indigo-100 text-sm max-w-2xl">
+              <p className="text-indigo-100 text-xs sm:text-sm max-w-2xl leading-relaxed">
                 Track assigned students, evaluate active IEP goals, and capture high-frequency trial data with one-click interactive counters.
               </p>
             </div>
@@ -221,7 +225,7 @@ export default function CaseloadPage() {
                 placeholder="Search student name, grade, or IEP goal..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
               />
             </div>
 
@@ -231,7 +235,7 @@ export default function CaseloadPage() {
                 <button
                   key={discipline}
                   onClick={() => setSelectedDiscipline(discipline)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                     selectedDiscipline === discipline
                       ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
@@ -244,7 +248,7 @@ export default function CaseloadPage() {
           </div>
 
           {/* Student Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             {filteredStudents.map((student) => (
               <div
                 key={student.id}
@@ -253,14 +257,14 @@ export default function CaseloadPage() {
                 <div className="space-y-4">
                   {/* Top Row: Avatar & Badges */}
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       <img
                         src={student.avatar}
                         alt={student.name}
-                        className="w-12 h-12 rounded-xl object-cover border-2 border-indigo-500/20 shadow-md group-hover:scale-105 transition-transform"
+                        className="w-12 h-12 rounded-xl object-cover border-2 border-indigo-500/20 shadow-md group-hover:scale-105 transition-transform flex-shrink-0"
                       />
-                      <div>
-                        <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+                      <div className="min-w-0">
+                        <h3 className="font-bold text-base text-slate-900 dark:text-slate-100 truncate">
                           {student.name}
                         </h3>
                         <div className="flex items-center gap-2 mt-0.5">
@@ -276,11 +280,11 @@ export default function CaseloadPage() {
 
                     {/* Status Badge */}
                     {student.completedToday ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex-shrink-0">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Done
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex-shrink-0">
                         <Clock className="w-3.5 h-3.5" /> {student.dueTodayCount} Due
                       </span>
                     )}
@@ -332,38 +336,38 @@ export default function CaseloadPage() {
 
           {/* Interactive Take Data Session Modal */}
           {activeModalStudent && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fadeIn">
-              <div className="glass-card w-full max-w-2xl rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fadeIn">
+              <div className="glass-card w-full max-w-2xl rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
                 {/* Modal Header */}
-                <div className="p-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
                     <img
                       src={activeModalStudent.avatar}
                       alt={activeModalStudent.name}
-                      className="w-12 h-12 rounded-xl border-2 border-white/30 object-cover"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 border-white/30 object-cover flex-shrink-0"
                     />
-                    <div>
+                    <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <h2 className="font-extrabold text-xl">{activeModalStudent.name}</h2>
-                        <span className="text-xs px-2 py-0.5 rounded bg-white/20 font-bold">
+                        <h2 className="font-extrabold text-base sm:text-xl truncate">{activeModalStudent.name}</h2>
+                        <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded bg-white/20 font-bold flex-shrink-0">
                           {activeModalStudent.grade}
                         </span>
                       </div>
-                      <p className="text-xs text-indigo-100 flex items-center gap-2 mt-0.5">
+                      <p className="text-[11px] sm:text-xs text-indigo-100 flex items-center gap-2 mt-0.5 truncate">
                         <span>⚡ Active Session</span> • <span>Timer: {formatTimer(sessionTimer)}</span>
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => setActiveModalStudent(null)}
-                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-white"
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-white flex-shrink-0"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 {/* Modal Content */}
-                <div className="p-6 overflow-y-auto space-y-6 flex-1">
+                <div className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6 flex-1">
                   {/* Goal Selector */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -372,7 +376,7 @@ export default function CaseloadPage() {
                     <select
                       value={selectedGoal}
                       onChange={(e) => setSelectedGoal(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 font-semibold text-sm focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 font-semibold text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500"
                     >
                       {activeModalStudent.goals.map((g, i) => (
                         <option key={i} value={g}>
@@ -383,28 +387,28 @@ export default function CaseloadPage() {
                   </div>
 
                   {/* Accuracy & Trial Counters */}
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-500/20">
-                      <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                  <div className="grid grid-cols-3 gap-2.5 sm:gap-4 text-center">
+                    <div className="p-2.5 sm:p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-500/20">
+                      <div className="text-[11px] sm:text-xs font-bold text-indigo-600 dark:text-indigo-400">
                         Accuracy
                       </div>
-                      <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400 flex items-center justify-center gap-1">
-                        <TrendingUp className="w-5 h-5" /> {accuracy}%
+                      <div className="text-xl sm:text-2xl font-black text-indigo-600 dark:text-indigo-400 flex items-center justify-center gap-1">
+                        <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" /> {accuracy}%
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20">
-                      <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                    <div className="p-2.5 sm:p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20">
+                      <div className="text-[11px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400">
                         Correct (+)
                       </div>
-                      <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                      <div className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400">
                         {correctCount}
                       </div>
                     </div>
-                    <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-500/20">
-                      <div className="text-xs font-bold text-rose-600 dark:text-rose-400">
+                    <div className="p-2.5 sm:p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-500/20">
+                      <div className="text-[11px] sm:text-xs font-bold text-rose-600 dark:text-rose-400">
                         Total Trials
                       </div>
-                      <div className="text-2xl font-black text-rose-600 dark:text-rose-400">
+                      <div className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400">
                         {trials.length}
                       </div>
                     </div>
@@ -415,7 +419,7 @@ export default function CaseloadPage() {
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                       Prompt Hierarchy Level
                     </label>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {[
                         { label: 'Independent', color: 'bg-emerald-500' },
                         { label: 'Verbal', color: 'bg-amber-500' },
@@ -426,32 +430,32 @@ export default function CaseloadPage() {
                           key={p.label}
                           type="button"
                           onClick={() => setPromptLevel(p.label as PromptLevel)}
-                          className={`p-2.5 rounded-xl border text-xs font-bold transition-all flex flex-col items-center gap-1 ${
+                          className={`p-2.5 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
                             promptLevel === p.label
-                              ? 'border-indigo-600 dark:border-indigo-400 ring-2 ring-indigo-500/30 bg-indigo-500/10'
-                              : 'border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
+                              ? 'border-indigo-600 dark:border-indigo-400 ring-2 ring-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                              : 'border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                           }`}
                         >
-                          <span className={`w-3 h-3 rounded-full ${p.color}`} />
-                          <span>{p.label}</span>
+                          <span className={`w-2.5 h-2.5 rounded-full ${p.color} flex-shrink-0`} />
+                          <span className="truncate">{p.label}</span>
                         </button>
                       ))}
                     </div>
                   </div>
 
                   {/* Primary Touch Target Buttons */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     <button
                       onClick={() => addTrial('correct')}
-                      className="py-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-lg shadow-lg shadow-emerald-600/30 active:scale-95 transition-all flex items-center justify-center gap-2"
+                      className="py-4 sm:py-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-base sm:text-lg shadow-lg shadow-emerald-600/30 active:scale-95 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
                     >
-                      <Plus className="w-7 h-7 stroke-[3]" /> CORRECT (+)
+                      <Plus className="w-5 h-5 sm:w-7 sm:h-7 stroke-[3]" /> CORRECT (+)
                     </button>
                     <button
                       onClick={() => addTrial('incorrect')}
-                      className="py-5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-lg shadow-lg shadow-rose-600/30 active:scale-95 transition-all flex items-center justify-center gap-2"
+                      className="py-4 sm:py-5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-base sm:text-lg shadow-lg shadow-rose-600/30 active:scale-95 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
                     >
-                      <Minus className="w-7 h-7 stroke-[3]" /> INCORRECT (-)
+                      <Minus className="w-5 h-5 sm:w-7 sm:h-7 stroke-[3]" /> INCORRECT (-)
                     </button>
                   </div>
 

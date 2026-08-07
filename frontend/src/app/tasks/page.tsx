@@ -18,11 +18,11 @@ import {
   Kanban,
   ChevronLeft,
   ChevronRight,
-  Plus,
   ArrowUpDown,
 } from 'lucide-react';
 
 export default function TasksPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [meta, setMeta] = useState({
     total: 0,
@@ -128,25 +128,26 @@ export default function TasksPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex">
-      <Sidebar />
+      <Sidebar mobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} />
 
-      <div className="flex-1 ml-64 min-w-0">
+      <div className="flex-1 lg:ml-64 min-w-0">
         <Navbar
           title="Task Operations Center"
           description="Manage, filter, sort, and organize your tasks."
           onOpenCreateModal={openCreateModal}
+          onOpenMobileMenu={() => setMobileMenuOpen(true)}
         />
 
-        <main className="p-8 space-y-6 max-w-7xl mx-auto">
+        <main className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
           {/* Controls Bar: Search, Filters, Views & Sort */}
           <div className="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 space-y-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
               {/* Search Bar */}
-              <div className="relative w-full md:w-80">
+              <div className="relative w-full sm:w-80">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
                   type="text"
-                  placeholder="Search by title or description..."
+                  placeholder="Search title or description..."
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -157,10 +158,10 @@ export default function TasksPage() {
               </div>
 
               {/* View Layout Toggles */}
-              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/70 p-1 rounded-xl">
+              <div className="flex items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800/70 p-1 rounded-xl w-full sm:w-auto">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors ${
+                  className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
                     viewMode === 'grid'
                       ? 'bg-white dark:bg-slate-900 shadow-sm text-indigo-600 dark:text-indigo-400'
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -171,7 +172,7 @@ export default function TasksPage() {
                 </button>
                 <button
                   onClick={() => setViewMode('table')}
-                  className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors ${
+                  className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
                     viewMode === 'table'
                       ? 'bg-white dark:bg-slate-900 shadow-sm text-indigo-600 dark:text-indigo-400'
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -182,7 +183,7 @@ export default function TasksPage() {
                 </button>
                 <button
                   onClick={() => setViewMode('kanban')}
-                  className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors ${
+                  className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
                     viewMode === 'kanban'
                       ? 'bg-white dark:bg-slate-900 shadow-sm text-indigo-600 dark:text-indigo-400'
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -195,8 +196,8 @@ export default function TasksPage() {
             </div>
 
             {/* Filter Dropdowns Row */}
-            <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60 text-xs">
-              <span className="font-semibold text-slate-500 flex items-center gap-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2.5 pt-3 border-t border-slate-200/60 dark:border-slate-800/60 text-xs">
+              <span className="font-semibold text-slate-500 flex items-center gap-1 sm:col-span-2 lg:col-span-1">
                 <Filter className="w-3.5 h-3.5" /> Filters:
               </span>
 
@@ -204,7 +205,7 @@ export default function TasksPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium focus:ring-2 focus:ring-indigo-500"
+                className="w-full lg:w-auto px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="TODO">To Do</option>
@@ -216,7 +217,7 @@ export default function TasksPage() {
               <select
                 value={priorityFilter}
                 onChange={(e) => { setPriorityFilter(e.target.value); setPage(1); }}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium focus:ring-2 focus:ring-indigo-500"
+                className="w-full lg:w-auto px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="ALL">All Priorities</option>
                 <option value="LOW">Low</option>
@@ -229,7 +230,7 @@ export default function TasksPage() {
               <select
                 value={categoryFilter}
                 onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium focus:ring-2 focus:ring-indigo-500"
+                className="w-full lg:w-auto px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="ALL">All Categories</option>
                 <option value="Work">Work</option>
@@ -240,7 +241,7 @@ export default function TasksPage() {
               </select>
 
               {/* Sort By */}
-              <div className="ml-auto flex items-center gap-2">
+              <div className="flex items-center justify-between sm:justify-end gap-2 w-full lg:w-auto lg:ml-auto pt-2 lg:pt-0 sm:col-span-2 lg:col-span-1">
                 <span className="font-semibold text-slate-500 flex items-center gap-1">
                   <ArrowUpDown className="w-3.5 h-3.5" /> Sort:
                 </span>
@@ -357,8 +358,8 @@ export default function TasksPage() {
 
           {/* Pagination Controls */}
           {meta.totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800 text-xs">
-              <span className="text-slate-500 dark:text-slate-400 font-medium">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-200 dark:border-slate-800 text-xs">
+              <span className="text-slate-500 dark:text-slate-400 font-medium text-center sm:text-left">
                 Showing page <strong className="text-slate-900 dark:text-white">{meta.page}</strong> of{' '}
                 <strong className="text-slate-900 dark:text-white">{meta.totalPages}</strong> ({meta.total} total items)
               </span>

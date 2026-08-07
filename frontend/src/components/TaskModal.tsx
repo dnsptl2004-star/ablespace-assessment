@@ -75,8 +75,8 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
-      <div className="w-full max-w-lg glass-card rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative animate-scaleUp">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
+      <div className="w-full max-w-lg glass-card rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative animate-scaleUp max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">
@@ -124,7 +124,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
           </div>
 
           {/* Grid of Selectors */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Status */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
@@ -157,7 +157,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Category */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
