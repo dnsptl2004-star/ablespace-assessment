@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: taskmaster-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: node dist/main
+    plan: free
+    region: oregon
+    envVars:
+      - key: DATABASE_URL
+        value: mongodb+srv://dnsptl2004:MyStrong%40123@cluster0.bdfkbv9.mongodb.net/mydb
+      - key: JWT_SECRET
+        value: super-secret-jwt-key-task-management-2026
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_URL
+        value: https://frontend-phi-ebon-19.vercel.app
+      - key: NODE_ENV
+        value: production
