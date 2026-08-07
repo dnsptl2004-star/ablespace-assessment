@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
@@ -36,7 +40,9 @@ export class AuthService {
         email: dto.email.toLowerCase(),
         name: dto.name,
         passwordHash,
-        avatarUrl: dto.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(dto.name)}`,
+        avatarUrl:
+          dto.avatarUrl ||
+          `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(dto.name)}`,
         settings: {
           create: {
             themeMode: 'system',
@@ -100,7 +106,8 @@ export class AuthService {
           email: guestEmail,
           name: 'Demo Guest User',
           passwordHash,
-          avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=GuestUser',
+          avatarUrl:
+            'https://api.dicebear.com/7.x/avataaars/svg?seed=GuestUser',
           settings: {
             create: {
               themeMode: 'system',
@@ -123,7 +130,11 @@ export class AuthService {
     };
   }
 
-  async googleLogin(googleUser: { email: string; name: string; avatarUrl?: string }) {
+  async googleLogin(googleUser: {
+    email: string;
+    name: string;
+    avatarUrl?: string;
+  }) {
     let user = await this.prisma.user.findUnique({
       where: { email: googleUser.email.toLowerCase() },
       include: { settings: true },
@@ -136,7 +147,9 @@ export class AuthService {
           email: googleUser.email.toLowerCase(),
           name: googleUser.name,
           passwordHash: dummyPassword,
-          avatarUrl: googleUser.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(googleUser.name)}`,
+          avatarUrl:
+            googleUser.avatarUrl ||
+            `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(googleUser.name)}`,
           settings: {
             create: {
               themeMode: 'system',
@@ -166,7 +179,8 @@ export class AuthService {
     const sampleTasks = [
       {
         title: 'Review AbleSpace Caseload UI Specs',
-        description: 'Audit the current caseload table and Take Data workflows for optimal student tracking.',
+        description:
+          'Audit the current caseload table and Take Data workflows for optimal student tracking.',
         status: 'IN_PROGRESS',
         priority: 'HIGH',
         category: 'Work',
@@ -175,7 +189,8 @@ export class AuthService {
       },
       {
         title: 'Design Dark Mode Design System Tokens',
-        description: 'Craft harmonious CSS color variables for slate backgrounds, glassmorphic cards, and accent buttons.',
+        description:
+          'Craft harmonious CSS color variables for slate backgrounds, glassmorphic cards, and accent buttons.',
         status: 'COMPLETED',
         priority: 'MEDIUM',
         category: 'Design',
@@ -184,7 +199,8 @@ export class AuthService {
       },
       {
         title: 'Setup NestJS & Prisma PostgreSQL Backend',
-        description: 'Configure Prisma schema models, JWT guards, REST endpoints, and pagination middleware.',
+        description:
+          'Configure Prisma schema models, JWT guards, REST endpoints, and pagination middleware.',
         status: 'COMPLETED',
         priority: 'URGENT',
         category: 'Development',
@@ -193,7 +209,8 @@ export class AuthService {
       },
       {
         title: 'Implement Next.js Task Kanban Board',
-        description: 'Add drag & drop support, status columns, filtering by priority, and fuzzy search.',
+        description:
+          'Add drag & drop support, status columns, filtering by priority, and fuzzy search.',
         status: 'TODO',
         priority: 'URGENT',
         category: 'Development',
@@ -202,7 +219,8 @@ export class AuthService {
       },
       {
         title: 'Configure Vercel & Render Deployment Pipeline',
-        description: 'Ensure automated builds, environment variable propagation, and CORS security settings.',
+        description:
+          'Ensure automated builds, environment variable propagation, and CORS security settings.',
         status: 'TODO',
         priority: 'LOW',
         category: 'DevOps',
