@@ -129,7 +129,17 @@ export class TasksService {
   async getStats(userId: string) {
     const now = new Date();
 
-    const [total, completed, inProgress, todo, overdue] = await Promise.all([
+    const [
+      total,
+      completed,
+      inProgress,
+      todo,
+      overdue,
+      urgent,
+      high,
+      medium,
+      low,
+    ] = await Promise.all([
       this.prisma.task.count({ where: { userId } }),
       this.prisma.task.count({ where: { userId, status: 'COMPLETED' } }),
       this.prisma.task.count({ where: { userId, status: 'IN_PROGRESS' } }),
@@ -141,10 +151,6 @@ export class TasksService {
           dueDate: { not: null, lt: now },
         },
       }),
-    ]);
-
-    // Priority breakdown
-    const [urgent, high, medium, low] = await Promise.all([
       this.prisma.task.count({ where: { userId, priority: 'URGENT' } }),
       this.prisma.task.count({ where: { userId, priority: 'HIGH' } }),
       this.prisma.task.count({ where: { userId, priority: 'MEDIUM' } }),
@@ -170,3 +176,4 @@ export class TasksService {
     };
   }
 }
+

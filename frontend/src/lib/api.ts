@@ -1,7 +1,17 @@
 import axios from 'axios';
 
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://taskmaster-backend-19k7.onrender.com';
-const API_BASE_URL = rawApiUrl.replace(/\/+$/, '');
+const getBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, '');
+  }
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return 'http://localhost:5000';
+  }
+  return 'https://taskmaster-backend-19k7.onrender.com';
+};
+
+const API_BASE_URL = getBaseUrl();
+
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

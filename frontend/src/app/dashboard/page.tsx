@@ -28,9 +28,11 @@ export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (showLoading = false) => {
     try {
-      setIsLoading(true);
+      if (showLoading || !stats) {
+        setIsLoading(true);
+      }
       const [statsRes, tasksRes] = await Promise.all([
         api.get<TaskStats>('/tasks/stats'),
         api.get('/tasks?limit=5&sortBy=createdAt&sortOrder=desc'),
@@ -45,7 +47,7 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    fetchDashboardData();
+    fetchDashboardData(true);
   }, []);
 
   const handleCreateTask = async (data: any) => {
@@ -53,7 +55,7 @@ export default function DashboardPage() {
       setSubmitLoading(true);
       await api.post('/tasks', data);
       setIsModalOpen(false);
-      await fetchDashboardData();
+      await fetchDashboardData(false);
     } catch (err) {
       console.error('Failed to create task:', err);
     } finally {
@@ -62,13 +64,46 @@ export default function DashboardPage() {
   };
 
   const handleStatusChange = async (id: string, newStatus: TaskStatus) => {
+    const prevTasks = [...recentTasks];
+    const prevStats = stats ? { ...stats } : null;
+
+    // Optimistic UI Update
+    setRecentTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
+    );
+
+    if (stats) {
+      const taskToUpdate = recentTasks.find((t) => t.id === id);
+      if (taskToUpdate && taskToUpdate.status !== newStatus) {
+        const updatedStats = { ...stats };
+        if (newStatus === 'COMPLETED') {
+          updatedStats.completed += 1;
+          if (taskToUpdate.status === 'IN_PROGRESS') updatedStats.inProgress -= 1;
+          if (taskToUpdate.status === 'TODO') updatedStats.todo -= 1;
+        } else if (newStatus === 'IN_PROGRESS') {
+          updatedStats.inProgress += 1;
+          if (taskToUpdate.status === 'COMPLETED') updatedStats.completed -= 1;
+          if (taskToUpdate.status === 'TODO') updatedStats.todo -= 1;
+        }
+        updatedStats.completionRate =
+          updatedStats.total > 0
+            ? Math.round((updatedStats.completed / updatedStats.total) * 100)
+            : 0;
+        setStats(updatedStats);
+      }
+    }
+
     try {
       await api.patch(`/tasks/${id}`, { status: newStatus });
-      await fetchDashboardData();
+      fetchDashboardData(false);
     } catch (err) {
       console.error('Failed to update task status:', err);
+      // Revert on error
+      setRecentTasks(prevTasks);
+      setStats(prevStats);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex">

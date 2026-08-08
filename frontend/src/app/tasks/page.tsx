@@ -35,8 +35,8 @@ export default function TasksPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'table' | 'kanban'>('grid');
 
-  // Search, Filter & Sort Controls State
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [priorityFilter, setPriorityFilter] = useState<string>('ALL');
   const [categoryFilter, setCategoryFilter] = useState<string>('ALL');
@@ -49,9 +49,19 @@ export default function TasksPage() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fetchTasks = async () => {
+  // Debounce search input by 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const fetchTasks = async (showLoading = true) => {
     try {
-      setIsLoading(true);
+      if (showLoading) {
+        setIsLoading(true);
+      }
       const params = new URLSearchParams({
         page: String(page),
         limit: String(viewMode === 'table' ? 10 : 9),
@@ -59,7 +69,7 @@ export default function TasksPage() {
         sortOrder,
       });
 
-      if (search.trim()) params.append('search', search.trim());
+      if (debouncedSearch.trim()) params.append('search', debouncedSearch.trim());
       if (statusFilter !== 'ALL') params.append('status', statusFilter);
       if (priorityFilter !== 'ALL') params.append('priority', priorityFilter);
       if (categoryFilter !== 'ALL') params.append('category', categoryFilter);
@@ -75,8 +85,8 @@ export default function TasksPage() {
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, [page, statusFilter, priorityFilter, categoryFilter, sortBy, sortOrder, search, viewMode]);
+    fetchTasks(true);
+  }, [page, statusFilter, priorityFilter, categoryFilter, sortBy, sortOrder, debouncedSearch, viewMode]);
 
   const handleCreateOrUpdate = async (data: any) => {
     try {
@@ -88,7 +98,7 @@ export default function TasksPage() {
       }
       setIsModalOpen(false);
       setEditingTask(null);
-      await fetchTasks();
+      await fetchTasks(false);
     } catch (err) {
       console.error('Task save error:', err);
     } finally {
@@ -98,23 +108,32 @@ export default function TasksPage() {
 
   const handleDeleteTask = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
+      const prevTasks = [...tasks];
+      setTasks((prev) => prev.filter((t) => t.id !== id));
       try {
         await api.delete(`/tasks/${id}`);
-        await fetchTasks();
+        fetchTasks(false);
       } catch (err) {
         console.error('Failed to delete task:', err);
+        setTasks(prevTasks);
       }
     }
   };
 
   const handleStatusChange = async (id: string, newStatus: TaskStatus) => {
+    const prevTasks = [...tasks];
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
+    );
     try {
       await api.patch(`/tasks/${id}`, { status: newStatus });
-      await fetchTasks();
+      fetchTasks(false);
     } catch (err) {
       console.error('Failed to update task status:', err);
+      setTasks(prevTasks);
     }
   };
+
 
   const openCreateModal = () => {
     setEditingTask(null);
