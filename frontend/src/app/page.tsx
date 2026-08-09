@@ -10,11 +10,13 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
+    router.prefetch('/dashboard');
+    router.prefetch('/login');
     if (!isLoading) {
       if (user) {
-        router.push('/dashboard');
+        router.replace('/dashboard');
       } else {
-        router.push('/login');
+        router.replace('/login');
       }
     }
   }, [user, isLoading, router]);

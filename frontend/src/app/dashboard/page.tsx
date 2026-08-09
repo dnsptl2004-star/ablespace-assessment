@@ -18,19 +18,46 @@ import {
   Flame,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [stats, setStats] = useState<TaskStats | null>(null);
-  const [recentTasks, setRecentTasks] = useState<Task[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState<TaskStats | null>(() => {
+    if (typeof window !== 'undefined') {
+      const cached = sessionStorage.getItem('task_master_stats');
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch {}
+      }
+    }
+    return null;
+  });
+  const [recentTasks, setRecentTasks] = useState<Task[]>(() => {
+    if (typeof window !== 'undefined') {
+      const cached = sessionStorage.getItem('task_master_recent_tasks');
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch {}
+      }
+    }
+    return [];
+  });
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('task_master_stats');
+    }
+    return true;
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
   const fetchDashboardData = async (showLoading = false) => {
     try {
-      if (showLoading || !stats) {
+      if (showLoading && !stats) {
         setIsLoading(true);
       }
       const [statsRes, tasksRes] = await Promise.all([
@@ -39,6 +66,10 @@ export default function DashboardPage() {
       ]);
       setStats(statsRes.data);
       setRecentTasks(tasksRes.data.data || []);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('task_master_stats', JSON.stringify(statsRes.data));
+        sessionStorage.setItem('task_master_recent_tasks', JSON.stringify(tasksRes.data.data || []));
+      }
     } catch (err) {
       console.error('Failed to fetch dashboard metrics:', err);
     } finally {
@@ -47,8 +78,12 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    fetchDashboardData(true);
-  }, []);
+    router.prefetch('/tasks');
+    router.prefetch('/profile');
+    router.prefetch('/settings');
+    router.prefetch('/caseload');
+    fetchDashboardData(false);
+  }, [router]);
 
   const handleCreateTask = async (data: any) => {
     try {

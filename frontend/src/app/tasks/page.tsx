@@ -23,7 +23,17 @@ import {
 
 export default function TasksPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    if (typeof window !== 'undefined') {
+      const cached = sessionStorage.getItem('task_master_tasks_list');
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch {}
+      }
+    }
+    return [];
+  });
   const [meta, setMeta] = useState({
     total: 0,
     page: 1,
@@ -32,7 +42,12 @@ export default function TasksPage() {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('task_master_tasks_list');
+    }
+    return true;
+  });
   const [viewMode, setViewMode] = useState<'grid' | 'table' | 'kanban'>('grid');
 
   const [search, setSearch] = useState('');
@@ -57,9 +72,9 @@ export default function TasksPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const fetchTasks = async (showLoading = true) => {
+  const fetchTasks = async (showLoading = false) => {
     try {
-      if (showLoading) {
+      if (showLoading && tasks.length === 0) {
         setIsLoading(true);
       }
       const params = new URLSearchParams({
@@ -77,6 +92,9 @@ export default function TasksPage() {
       const res = await api.get<PaginatedResponse<Task>>(`/tasks?${params.toString()}`);
       setTasks(res.data.data);
       setMeta(res.data.meta);
+      if (typeof window !== 'undefined' && page === 1 && statusFilter === 'ALL' && !debouncedSearch) {
+        sessionStorage.setItem('task_master_tasks_list', JSON.stringify(res.data.data));
+      }
     } catch (err) {
       console.error('Failed to fetch tasks:', err);
     } finally {
@@ -85,7 +103,8 @@ export default function TasksPage() {
   };
 
   useEffect(() => {
-    fetchTasks(true);
+    const hasCache = tasks.length > 0;
+    fetchTasks(!hasCache);
   }, [page, statusFilter, priorityFilter, categoryFilter, sortBy, sortOrder, debouncedSearch, viewMode]);
 
   const handleCreateOrUpdate = async (data: any) => {

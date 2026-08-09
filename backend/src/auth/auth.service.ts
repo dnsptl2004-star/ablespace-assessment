@@ -229,8 +229,8 @@ export class AuthService {
       },
     ];
 
-    for (const t of sampleTasks) {
-      await this.prisma.task.create({ data: t });
-    }
+    await this.prisma.task.createMany({
+      data: sampleTasks,
+    });
   }
 }

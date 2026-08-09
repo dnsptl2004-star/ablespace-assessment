@@ -4,7 +4,12 @@ const getBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, '');
   }
-  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+  if (
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.startsWith('192.168.'))
+  ) {
     return 'http://localhost:5000';
   }
   return 'https://taskmaster-backend-19k7.onrender.com';
@@ -12,9 +17,9 @@ const getBaseUrl = () => {
 
 const API_BASE_URL = getBaseUrl();
 
-
 export const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
   },
