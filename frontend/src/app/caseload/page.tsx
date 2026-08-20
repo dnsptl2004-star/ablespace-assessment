@@ -590,7 +590,7 @@ export default function CaseloadPage() {
 
                     {sessionLogs.filter((l) => l.studentId === reportStudent.id).length === 0 ? (
                       <p className="text-slate-400 italic text-center py-4">
-                        No trial session logs recorded yet. Use "TAKE DATA" to capture session trials.
+                        No trial session logs recorded yet. Use &quot;TAKE DATA&quot; to capture session trials.
                       </p>
                     ) : (
                       <div className="space-y-2">
@@ -613,7 +613,7 @@ export default function CaseloadPage() {
                               </div>
                               {log.note && (
                                 <p className="text-[11px] text-slate-500 dark:text-slate-400 italic bg-slate-50 dark:bg-slate-800/40 p-2 rounded-lg mt-1">
-                                  "{log.note}"
+                                  &quot;{log.note}&quot;
                                 </p>
                               )}
                             </div>
