@@ -51,12 +51,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       try {
         const res = await api.get<User>('/auth/me');
-        setUser(res.data);
-        localStorage.setItem('task_master_user', JSON.stringify(res.data));
-      } catch (err) {
-        localStorage.removeItem('task_master_token');
-        localStorage.removeItem('task_master_user');
-        setUser(null);
+        setUser((prev) => {
+          if (JSON.stringify(prev) !== JSON.stringify(res.data)) {
+            localStorage.setItem('task_master_user', JSON.stringify(res.data));
+            return res.data;
+          }
+          return prev;
+        });
+      } catch (err: any) {
+        if (err.response?.status === 401) {
+          localStorage.removeItem('task_master_token');
+          localStorage.removeItem('task_master_user');
+          setUser(null);
+        }
       } finally {
         setIsLoading(false);
       }

@@ -129,40 +129,34 @@ export class TasksService {
   async getStats(userId: string) {
     const now = new Date();
 
-    const tasks = await this.prisma.task.findMany({
-      where: { userId },
-      select: {
-        status: true,
-        priority: true,
-        dueDate: true,
-      },
-    });
+    const [
+      total,
+      completed,
+      inProgress,
+      todo,
+      overdue,
+      urgent,
+      high,
+      medium,
+      low,
+    ] = await Promise.all([
+      this.prisma.task.count({ where: { userId } }),
+      this.prisma.task.count({ where: { userId, status: 'COMPLETED' } }),
+      this.prisma.task.count({ where: { userId, status: 'IN_PROGRESS' } }),
+      this.prisma.task.count({ where: { userId, status: 'TODO' } }),
+      this.prisma.task.count({
+        where: {
+          userId,
+          status: { not: 'COMPLETED' },
+          dueDate: { lt: now },
+        },
+      }),
+      this.prisma.task.count({ where: { userId, priority: 'URGENT' } }),
+      this.prisma.task.count({ where: { userId, priority: 'HIGH' } }),
+      this.prisma.task.count({ where: { userId, priority: 'MEDIUM' } }),
+      this.prisma.task.count({ where: { userId, priority: 'LOW' } }),
+    ]);
 
-    let completed = 0;
-    let inProgress = 0;
-    let todo = 0;
-    let overdue = 0;
-    let urgent = 0;
-    let high = 0;
-    let medium = 0;
-    let low = 0;
-
-    for (const t of tasks) {
-      if (t.status === 'COMPLETED') completed++;
-      else if (t.status === 'IN_PROGRESS') inProgress++;
-      else if (t.status === 'TODO') todo++;
-
-      if (t.status !== 'COMPLETED' && t.dueDate && new Date(t.dueDate) < now) {
-        overdue++;
-      }
-
-      if (t.priority === 'URGENT') urgent++;
-      else if (t.priority === 'HIGH') high++;
-      else if (t.priority === 'MEDIUM') medium++;
-      else if (t.priority === 'LOW') low++;
-    }
-
-    const total = tasks.length;
     const completionRate =
       total > 0 ? Math.round((completed / total) * 100) : 0;
 

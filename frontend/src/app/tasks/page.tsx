@@ -79,7 +79,7 @@ export default function TasksPage() {
       }
       const params = new URLSearchParams({
         page: String(page),
-        limit: String(viewMode === 'table' ? 10 : 9),
+        limit: String(viewMode === 'kanban' ? 50 : viewMode === 'table' ? 10 : 9),
         sortBy,
         sortOrder,
       });

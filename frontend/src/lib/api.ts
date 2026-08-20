@@ -12,14 +12,17 @@ const getBaseUrl = () => {
   ) {
     return 'http://localhost:5000';
   }
-  return 'https://taskmaster-backend-19k7.onrender.com';
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:5000';
+  }
+  return 'http://localhost:5000';
 };
 
 const API_BASE_URL = getBaseUrl();
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 15000,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
